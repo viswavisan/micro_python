@@ -1,0 +1,1 @@
+table={'wifi': {'Devil': 'annyeo12','kokila':'kokila123'}}

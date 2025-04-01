@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File List</title>
+    <script src="/script.js" defer></script>
+
+     <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
+        h1 { color: #007BFF; text-align: center; }
+        h2 { color: #333; }
+        .container { margin: auto; background: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); display: flex; justify-content: space-between; }
+        .container .device-details {flex: 1;min-width: 300px;}
+        @media (max-width: 1000px) { .container {flex-direction: column;} .container .device-details {margin-bottom: 10px;} }
+        .device-details, .controls { flex: 1; margin: 10px; }
+        .box, .wifi-info { margin-top: 20px; padding: 10px; background: #e9ecef; border-radius: 5px; }
+        img { width: 420px; }
+        .container1 { overflow: auto; display: flex;align-items: flex-start;}
+        .switch-column { display: flex; flex-direction: column;align-items: flex-start;}
+     </style>
+
+</head>
+<body>
+    <h1>RaspberryPi PICO</h1>
+    <div class="container">
+
+        <div class="device-details">
+            <h2>Device Details</h2>
+            <div class="wifi-info">
+                <p>IP Address: <span id="ip-address">192.168.4.1</span></p>
+                <p>Temperature: <span id="temperature"> {{ temperature }} </span></p>
+                <p>Memory used: <span id="memory"> {{ memory }} </span></p>
+                <p>Access Point Name: <strong>picow</strong></p>
+                <p>Password: <strong>picow123</strong></p>
+                <p>Hotspot Status: <span id="hotspot">off</span> <button id='check_status'>on</button></p>
+                <p>Wi-Fi: <span id="wstate"> Not connected </span></p>
+                <p>Wifi list: <select id="wifi_list"></select><button id="scan">scan</button><button id="connect_wifi">+</button></p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <h2>Controls:</h2>
+            <div class="box1">
+
+                <div class="container1">
+                    <div class="switch-column" id="left-switches" style="margin-top: 40px; min-width:45px"></div>
+                    <div class="switch-column" id="imagerow">
+                        <img id="pico_image" src="" alt="Raspberry Pi Pico">
+                    </div>
+                    <div class="switch-column" id="right-switches" style="margin-top: 40px;min-width:45px"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
