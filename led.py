@@ -4,26 +4,64 @@ import utime
 import gc
 from time import sleep
 from micropython import const
-import framebuf
+import framebuf,neopixel
 
 class PIN:
-    def __init__(self):pass
-    def RGB(self,r_pin,g_pin,b_pin,r=255,g=255,b=255):
-        colors = [min(255, c) for c in [r, g, b]]
-        pwm_channels = [PWM(Pin(p)) for p in [r_pin,g_pin,b_pin]]
-        for p in pwm_channels:p.freq(1000)
-        for p, c in zip(pwm_channels, colors):p.duty_u16(65535 - int(c * 257))
-    def STATE(self,pin):return Pin(pin, Pin.OUT)
+    '''LED related code #verified
+    |------------------------------------------------------|
+    |item        | price     | voltage   | description     |
+    |------------------------------------------------------|
+    |LED-bulb    | ~1 rs     | ~3v       |                 |
+    |------------------------------------------------------|
+    |RGB =bulb   | ~3 rs     | ~3v       |                 |
+    |------------------------------------------------------|
+    |LED-strip   | ~1000 rs  | ~5v       | ws2812B         |
+    |------------------------------------------------------|
 
-# Register definitions
-SET_DISP = const(0xAE)
-SET_MEM_ADDR = const(0x20)
-SET_COL_ADDR = const(0x21)
-SET_PAGE_ADDR = const(0x22)
-SET_CONTRAST = const(0x81)
+    '''
+    def __init__(self,type='led',pin=0,num_leds=3):
+        self.type=type
+        if type == 'strip':self.led=neopixel.NeoPixel(Pin(pin), num_leds)
+        elif type == 'rgb':
+            self.led = [PWM(Pin(p)) for p in pin]
+            for p in self.led:p.freq(1000)
+        else:self.led=Pin(pin, Pin.OUT)
+
+    def set_color(self,r,g,b,led_number=0):
+        if self.type=='strip':
+            self.led[led_number] = (r, g, b)
+            self.led.write()
+        elif self.type=='rgb':
+            colors = [-(min(255, c)-255) for c in [r, g, b]]
+            for p, c in zip(self.led, colors):p.duty_u16(65535 - int(c * 257))
+    def off(self):
+        if self.type=='strip':
+            for i in range(len(self.led)):self.led[i]=(0,0,0)
+            self.led.write()
+        elif self.type=='rgb':
+            for p in self.led:p.duty_u16(0)
+        else:self.led.off()
+    def on(self):self.led.on()
+
+
 
 class OLED(framebuf.FrameBuffer):
+    '''disply module #verified
+    |-------------------------------------------------------|
+    |item         | price     | voltage   | description     |
+    |-------------------------------------------------------|
+    |oled with i2c| ~200 rs   | ~3v       |0.96 inch ssd1306|
+    |-------------------------------------------------------|
+    |oled with i2c| ~150 rs   | ~3v       |0.91 inch ssd1306|
+    |-------------------------------------------------------|
+
+    '''
     def __init__(self):
+        SET_DISP = const(0xAE)
+        SET_MEM_ADDR = const(0x20)
+        SET_COL_ADDR = const(0x21)
+        SET_PAGE_ADDR = const(0x22)
+        SET_CONTRAST = const(0x81)
         self.i2c=I2C(1, scl=Pin(27), sda=Pin(26), freq=200000)
         width,height,self.addr=128,64,0x3C
         self.buffer = bytearray((height // 8) * width)
@@ -39,18 +77,17 @@ class OLED(framebuf.FrameBuffer):
         self.fill(0)
         self.show()
 
-def main():
-    oled = OLED()
-    fb = framebuf.FrameBuffer(bytearray(b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00|?\x00\x01\x86@\x80\x01\x01\x80\x80\x01\x11\x88\x80\x01\x05\xa0\x80\x00\x83\xc1\x00\x00C\xe3\x00\x00~\xfc\x00\x00L'\x00\x00\x9c\x11\x00\x00\xbf\xfd\x00\x00\xe1\x87\x00\x01\xc1\x83\x80\x02A\x82@\x02A\x82@\x02\xc1\xc2@\x02\xf6>\xc0\x01\xfc=\x80\x01\x18\x18\x80\x01\x88\x10\x80\x00\x8c!\x00\x00\x87\xf1\x00\x00\x7f\xf6\x00\x008\x1c\x00\x00\x0c \x00\x00\x03\xc0\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"), 32, 32, framebuf.MONO_HLSB)
-    oled.blit(fb, 96, 0)
-    oled.text("viswa", 5, 5)
-    oled.text("Pico", 5, 15)
-    oled.show()
 
-
-#LCD 16x2
 class LcdApi:
-
+    '''disply module #verified
+    |-------------------------------------------------------|
+    |item         | price     | voltage   | description     |
+    |-------------------------------------------------------|
+    |16X2 LCD     | ~100 rs   | ~5v       |                 |
+    |-------------------------------------------------------|
+    |i2c          | ~100 rs   | ~5v       |                 |
+    |-------------------------------------------------------|
+    '''
     def __init__(self,sda_pin=0,scl_pin=1,freq=400000):
         self.i2c = I2C(0, sda=Pin(sda_pin), scl=Pin(scl_pin), freq=freq)
         self.i2c_addr = self.i2c.scan()[0]
@@ -126,5 +163,15 @@ class LcdApi:
         self.i2c.writeto(self.i2c_addr, bytes([byte]))
         gc.collect()
 
+if __name__ == '__main__':
+    led=PIN('led',0)
+    led.on()
+    rgb=PIN('rgb',[1,2,3])
+    rgb.set_color(255,0,0)
+    strip=PIN('strip',4,3)
+    strip.set_color(255,0,0,0)
+    strip.set_color(1,255,0,1)
 
-if __name__ == '__main__':main()
+    strip.off()
+    led.off()
+    rgb.off()
