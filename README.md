@@ -4,6 +4,8 @@ All components code in less number of lines and inbuild python modules
 
 ###### Current used (I): DC
 
+Direct current (DC) is one-directional flow of electric charge
+
 **Voltage (V):3~12 v**
 
 * 3v- led bulbs, sensors
@@ -19,11 +21,19 @@ To reduce  voltage in certain amount resistors are used irrespective to output
 
 **Voltage regulator:**
 
-To obtain fixed output irrespective to input. unused voltage will converted as heat rejection
+To obtain fixed output irrespective to input. unused voltage will converted as heat rejection.
+
+buck convertor (stepup/stepdown),zenor diode
 
 **Capacitors (optional):**
 
 To store energy and enable smooth start and stop. normally used in motors to reduce noice
+
+**Transistor:**
+
+A transistor is a miniature semiconductor that regulates or controls current or voltage flow
+
+Bipolar junction transistor (BJT)-NPN or PNP
 
 ## components description
 
