@@ -1,25 +1,19 @@
 from machine import Pin
 import utime
-trigger = Pin(14, Pin.OUT)
-echo = Pin(15, Pin.IN)
-def ultra():
-   try:
-        trigger.low()
+
+class ultra:
+    def __init__(self):
+        self.trigger = Pin(14, Pin.OUT)
+        self.echo = Pin(15, Pin.IN)
+    def trigger_signal(self):
+        self.trigger.low()
         utime.sleep_us(2)
-        trigger.high()
+        self.trigger.high()
         utime.sleep_us(5)
-        trigger.low()
-        while echo.value() == 0:
-            signaloff = utime.ticks_us()
-            if signaloff>132136867*10:print(signaloff)
-        while echo.value() == 1:
-            signalon = utime.ticks_us()
-            if signalon>132136867*10:print(signalon)
+        self.trigger.low()
+    def get_signal(self):
+        while self.echo.value() == 0:signaloff = utime.ticks_us()
+        while self.echo.value() == 1:signalon = utime.ticks_us()
         timepassed = signalon - signaloff
         distance = (timepassed * 0.0343) / 2
-        if distance <30: print('abstrucle found', distance)
-        # print("The distance from object is ",distance,"cm")
-   except:return
-while True:
-   ultra()
-   utime.sleep(1)
+        return distance

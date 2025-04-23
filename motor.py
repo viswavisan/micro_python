@@ -29,8 +29,7 @@ class DC_motor:
         self.m1s = PWM(Pin(2))
         self.m1s.freq(1000)
         self.min_duty = 25000
-        self.max_duty = 45535
-
+        self.max_duty = 65535
 
     def run(self,direction='forward',speed_percent=None):
         time.sleep(0.5)
@@ -38,6 +37,15 @@ class DC_motor:
         elif direction=='backward':self.m1f.high();self.m1b.low()
         else:self.m1f.low();self.m1b.low();self.m1s.duty_u16(0)
         if speed_percent:self.speed(speed_percent)
+    
+    def step_run(self,direction='forward',speed_percent=None):
+        time.sleep(0.5)
+        if direction=='forward':self.m1f.low();self.m1b.high()
+        elif direction=='backward':self.m1f.high();self.m1b.low()
+        else: return
+        if speed_percent:self.speed(speed_percent)
+        time.sleep(1)
+        self.m1f.low();self.m1b.low();self.m1s.duty_u16(0)
 
     def speed(self,speed_percent):
         duty = int(self.min_duty + (self.max_duty - self.min_duty) * (speed_percent / 100))
@@ -70,12 +78,13 @@ class stepper_motor:
             self.step_pin.value(0)
             time.sleep_ms(delay_ms)
 try:
+    print('start')
     m=DC_motor()
-    m.speed(10)
-    m.run('forward')
-    time.sleep(5)
+    m.speed(100)
     m.run('backward')
-    time.sleep(3)
+    # time.sleep(5)
+    # m.run('backward')
+    time.sleep(10)
     m.stop()
 except:
     m.stop()
