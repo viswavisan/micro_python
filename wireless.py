@@ -53,12 +53,10 @@ class wifi:
                 ssid=network_info[0].decode()
                 if ssid in database.table['wifi']:
                     x=self.connect_wifi(ssid,database.table['wifi'][ssid])
-                    print(x)
                     return x
 
         except Exception as e:return str(e)
 
-wifi().auto_connect()
 
 class IR_RX():
 
@@ -136,38 +134,38 @@ class IR_TX:
             sleep_us(100)
         self.pwm.deinit()
 
-ir=IR_RX()
-signal = [8996, 4500, 526, 528, 526, 526, 526, 527, 526, 533, 522, 531, 521, 532, 521, 535, 517, 528, 525, 1688, 527, 1689, 525, 1687, 526, 1688, 527, 1687, 527, 1687, 527, 1689, 524, 1688, 528, 525, 532, 1684, 525, 527, 526, 526, 527, 526, 528, 1686, 527, 528, 524, 1688, 528, 1686, 527, 528, 525, 1687, 536, 1678, 527, 1687, 527, 526, 529, 1686, 526, 528, 525]
-irt=IR_TX()
-irt.send_signal(signal)
+# ir=IR_RX()
+# signal = [8996, 4500, 526, 528, 526, 526, 526, 527, 526, 533, 522, 531, 521, 532, 521, 535, 517, 528, 525, 1688, 527, 1689, 525, 1687, 526, 1688, 527, 1687, 527, 1687, 527, 1689, 524, 1688, 528, 525, 532, 1684, 525, 527, 526, 526, 527, 526, 528, 1686, 527, 528, 524, 1688, 528, 1686, 527, 528, 525, 1687, 536, 1678, 527, 1687, 527, 526, 529, 1686, 526, 528, 525]
+# irt=IR_TX()
+# irt.send_signal(signal)
 
-import bluetooth
-
-
-class BT:
-    MOTOR_PIN = 15
-    motor = Pin(MOTOR_PIN, Pin.OUT)
-    bt = bluetooth.BLE()
-    bt.active(True)
-    bt.gap_advertise(100, b'\x02\x01\x06\x03\x03\x12\x18')
-
-    def __init__(self, pin):pass
+# import bluetooth
 
 
-    # Function to handle incoming commands
-    def bt_callback(self,event, data):
-        if event == 1:  # Event 1 is typically data received
-            command = data.decode().strip()
-            self.control_motor(command)
+# class BT:
+#     MOTOR_PIN = 15
+#     motor = Pin(MOTOR_PIN, Pin.OUT)
+#     bt = bluetooth.BLE()
+#     bt.active(True)
+#     bt.gap_advertise(100, b'\x02\x01\x06\x03\x03\x12\x18')
 
-    # Function to control motor
-    def control_motor(self,command):
-        if command == 'forward':
-            self.motor.on()
-            print("Motor Moving Forward")
-        elif command == 'backward':
-            self.motor.off()
-            print("Motor Stopped")
+#     def __init__(self, pin):pass
+
+
+#     # Function to handle incoming commands
+#     def bt_callback(self,event, data):
+#         if event == 1:  # Event 1 is typically data received
+#             command = data.decode().strip()
+#             self.control_motor(command)
+
+#     # Function to control motor
+#     def control_motor(self,command):
+#         if command == 'forward':
+#             self.motor.on()
+#             print("Motor Moving Forward")
+#         elif command == 'backward':
+#             self.motor.off()
+#             print("Motor Stopped")
 
 class RF:
     TX_PIN = 15

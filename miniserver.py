@@ -68,12 +68,16 @@ class Server:
                     print('reconnecting'+str(i))
                     if i==9:machine.reset()
             server.listen(1)
-            print('port connected')
+            print('port connected on http://localhost')
             while True:
                 try:
+                    print('waiting for request')
                     client, _ = server.accept()
+                    print('request received')
                     self.handle_request(client)
-                except:pass
+                except KeyboardInterrupt:
+                    print("KeyboardInterrupt detected. Shutting down.")
+                    break
         except Exception as e:print(str(e))
 
     def template_response(self, file_path, context=None):

@@ -19,7 +19,7 @@ class PIN:
     |------------------------------------------------------|
 
     '''
-    def __init__(self,type='led',pin=0,num_leds=3):
+    def __init__(self,type='led',pin='LED',num_leds=3):
         self.type=type
         if type == 'strip':self.led=neopixel.NeoPixel(Pin(pin), num_leds)
         elif type == 'rgb':
@@ -164,7 +164,8 @@ class LcdApi:
         gc.collect()
 
 if __name__ == '__main__':
-    led=PIN('led',0)
+    print('running')
+    led=PIN('led','LED')
     led.on()
     rgb=PIN('rgb',[1,2,3])
     rgb.set_color(255,0,0)
@@ -175,3 +176,5 @@ if __name__ == '__main__':
     strip.off()
     led.off()
     rgb.off()
+
+
